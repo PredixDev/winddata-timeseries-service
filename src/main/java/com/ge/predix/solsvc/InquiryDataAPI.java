@@ -22,8 +22,8 @@ import javax.ws.rs.core.Response;
 {
         "application/json", "application/xml"
 })
-@Path("/windservices")
-public interface WindDataAPI
+@Path("/pm25services")
+public interface InquiryDataAPI
 {
 	/**
 	 * @return -
@@ -45,10 +45,10 @@ public interface WindDataAPI
 	 */
 	@GET
 	@Path("/yearly_data/sensor_id/{id}")
-	public Response getYearlyWindDataPoints(@PathParam("id") String id,
+	public Response getYearlyPm25DataPoints(@PathParam("id") String id,
 			@HeaderParam(value = "Authorization") String authorization,
 			@DefaultValue("1y-ago") @QueryParam("starttime") String starttime,
-			@DefaultValue("25") @QueryParam("taglimit") String tagLimit,@DefaultValue("desc") @QueryParam("order") String tagorder);
+			@DefaultValue("10000") @QueryParam("taglimit") String tagLimit,@DefaultValue("desc") @QueryParam("order") String tagorder);
 
 	/**
 	 * @param id
@@ -59,7 +59,7 @@ public interface WindDataAPI
 	 */
 	@GET
 	@Path("/latest_data/sensor_id/{id}")
-	public Response getLatestWindDataPoints(@PathParam("id") String id,
+	public Response getLatestPm25DataPoints(@PathParam("id") String id,
 			@HeaderParam(value = "authorization") String authorization);
 
 	/**
@@ -68,6 +68,6 @@ public interface WindDataAPI
 	 */
 	@GET
 	@Path("/tags")
-	public Response getWindDataTags();
+	public Response getPm25DataTags();
 }
 
