@@ -1,16 +1,16 @@
 #inherit: base-manifest.yml 
 applications:
-  - name: <yourname>-winddata-timeseries-service
+  - name: cdz-inquiry-timeseries-service
     buildpack: java_buildpack
-    path: target/winddata-timeseries-service-1.1.10.jar
-    memory: 256M
+    path: target/inquiry-timeseries-service-1.1.10.jar
+    memory: 1024M
     services:
-      - <your-name>-secure-uaa-instance
-      - <your-name>-timeseries-instance
+      - uaa_2
+      - time_1
 env:
-    predix_timeseries_name : <your-name>-timeseries-instance
-    predix_oauthRestHost : {UAA Host URI from Vcaps  example 93cfba56-e9bd-431d-a55e-5a75c6638698.predix-uaa.run.aws-usw02-pr.ice.predix.io}
-    predix_oauthClientId : <your-client-id>:<your client secret>
+    predix_timeseries_name : time_1
+    predix_oauthRestHost : 22d00b7a-388b-4b16-a142-56c99c8002fe.predix-uaa.run.aws-usw02-pr.ice.predix.io
+    predix_oauthClientId : gegege:quanquan
     trustedIssuerIdsRegexPattern : ^http://(.*\\.)?.predix-uaa.run.aws-usw02-pr.ice/oauth/token$
-    predix_connectionTimeout : 5000
-    predix_socketTimeout : 5000
+    predix_connectionTimeout : 20000
+    predix_socketTimeout : 20000
