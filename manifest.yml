@@ -1,0 +1,23 @@
+#inherit: base-manifest.yml 
+applications:
+  - name: <yourname>-winddata-timeseries-service
+    buildpack: java_buildpack
+    path: target/winddata-timeseries-service-2.0.0.jar
+    memory: 256M
+    services:
+      - <your-name>-secure-uaa-instance
+      - <your-name>-timeseries-instance
+      #- <your-name>-acs-instance
+env:
+    predix_timeseries_name : <your-name>-timeseries-instance
+    predix_oauthRestHost : {UAA Host URI from Vcaps  example 93cfba56-e9bd-431d-a55e-5a75c6638698.predix-uaa.run.aws-usw02-pr.ice.predix.io}
+    predix_oauthClientId : <your-client-id>:<your client secret>
+    trustedIssuerIdsRegexPattern : ^http://(.*\\.)?.predix-uaa.run.aws-usw02-pr.ice/oauth/token$
+    predix_connectionTimeout : 5000
+    predix_socketTimeout : 5000
+    redix_poolMaxSize: 200
+    defaultMaxPerRoute: 25
+   #acsServiceInstanceName: <your-name>-acs-instance
+   #clientId : <your-client-id>
+   #clientSecret: <your client secret>
+   #accessTokenEndpointUrl : {UAA Host URI from Vcaps  example https://eb1a10a1-41aa-42ce-8af8-e80f6b68cfd3.predix-uaa.run.aws-usw02-pr.ice.predix.io/oauth/token}
