@@ -1,0 +1,73 @@
+{
+    "name" : "winddata-acs-policy",
+    "policies" : [
+            {
+            "name" : "allow-all-HTTP-requests-for-admin",
+            "target" : {
+                "resource" : {
+                 "uriTemplate" : "/services/windservices/tags"
+                },
+                "subject" : {
+                    "name" : "has-role",
+                    "attributes" : [
+                        { "issuer" : "https://acs.attributes.int",
+                          "name" : "role" }
+                    ]
+                }
+            },
+            "conditions" : [
+                { "name" : "",
+                  "condition" : "match.single(subject.attributes('https://acs.attributes.int', 'role'), 'admin')" }
+            ],
+            "effect" : "PERMIT"
+        }
+    ,
+    {
+            "name" : "allow-only- POST-for-operator",
+            "target" : {
+                "resource" : {
+                    "uriTemplate" : "/"
+                },
+                "action":"POST",
+                "subject" : {
+                    "name" : "has-role",
+                    "attributes" : [
+                        { "issuer" : "https://acs.attributes.int",
+                          "name" : "role" }
+                    ]
+                }
+            },
+            "conditions" : [
+                { "name" : "",
+                  "condition" : "match.single(subject.attributes('https://acs.attributes.int', 'role'), 'admin')" }
+            ],
+            "effect" : "PERMIT"
+        },
+        {
+            "name" : "deny-only-HTTP GET-for-operator",
+            "target" : {
+                "resource" : {
+                    "uriTemplate" : "/services/windservices/tags"
+                },
+                "action":"GET",
+                "subject" : {
+                    "name" : "has-role",
+                    "attributes" : [
+                        { "issuer" : "https://acs.attributes.int",
+                          "name" : "role" }
+                    ]
+                }
+            },
+            "conditions" : [
+                { "name" : "",
+                  "condition" : "match.single(subject.attributes('https://acs.attributes.int', 'role'), 'operator')" }
+            ],
+            "effect" : "DENY"
+        }
+    ,
+        {
+            "name" : "catch-all-DENY-policy",
+            "effect" : "DENY"
+        }
+    ]
+}
