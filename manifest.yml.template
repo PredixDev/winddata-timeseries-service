@@ -12,7 +12,7 @@ env:
     # NOTE: Some values in curly braces are updated by scripts
     predix_uaa_name: {uaaService}
     predix_timeseries_name : {timeSeriesService}
-    predix_oauth_clientId : your-clientId:your-secret
+    predix_oauth_clientId : {clientId}:{secret}
     #default timeseries
     predix_timeseries_wspool_maxIdle : 5
     predix_timeseries_wspool_maxActive : 5
