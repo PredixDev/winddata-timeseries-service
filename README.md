@@ -11,6 +11,11 @@ Welcome to Winddata Time Series Service. This is a back-end application built in
 
 NOTE: This application relies on setting up of UAA and Time Series service instances in the Predix Cloud. For further information on how to set up, please visit our [Exploring Time Series Guide](https://www.predix.io/resources/tutorials/journey.html#Journey.Exploring Time Series).
 
+Winddata has the following structure, which mirrors that of a Microservice Template found at [predix-microservice-cf-jsr](https://github.com/PredixDev/predix-microservice-cf-jsr)
+
+<img src="images/Winddata-microservice-template.png	">
+
+
 ##Run integration tests
 
 1. Ensure you have set up your predix.io username/encrypted password in the maven settings.xml. Instruction are found [here](https://www.predix.io/resources/tutorials/tutorial-details.html?tutorial_id=1560&tag=1608&journey=Development%20tools%20and%20tips&resources=1565,1560).
