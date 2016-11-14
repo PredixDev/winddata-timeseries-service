@@ -24,7 +24,7 @@ env:
     accessTokenEndpointUrl : https://{oauthRestHost}/oauth/token
     clientId : {clientId}
     clientSecret: {secret}
-	#used by predix uaa-token-lib
+    #used by predix uaa-token-lib
     trustedIssuerIdsRegexPattern : ^https://(.*\\.)?{oauthRestHost}/oauth/token$
     #logging - see application-cloud.properties
     logging_level_root: INFO
