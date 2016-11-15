@@ -28,7 +28,8 @@ import com.ge.predix.solsvc.timeseries.bootstrap.config.ITimeseriesConfig;
 public class SecondaryTimeseriesConfig extends DefaultTimeseriesConfig
         implements EnvironmentAware, ITimeseriesConfig
 {
-    
+    	private static Logger log = LoggerFactory.getLogger(SecondaryTimeseriesConfig.class);
+
     /**
      * @param oauthIssuerId the oauthIssuerId to set
      */
