@@ -97,6 +97,15 @@ public class SecondaryTimeseriesConfig extends DefaultTimeseriesConfig
     public void setEnvironment(Environment env)
     {
         String vcapPropertyName = null;
+        String uaaName = env.getProperty(UAA2_VCAPS_NAME); // this is set on the manifest of the application
+
+        vcapPropertyName = null;
+        vcapPropertyName = "vcap.services." + uaaName + ".credentials.issuerId";
+        if ( !StringUtils.isEmpty(env.getProperty(vcapPropertyName)) ) {
+        	log.debug("env var found for oauthIssuerId=" + env.getProperty(vcapPropertyName) );
+            this.setOauthIssuerId(env.getProperty(vcapPropertyName));
+        }
+        
         String tsName = env.getProperty(TIME_SERIES2_VCAPS_NAME); // this is set
                                                                  // on the
                                                                  // manifest
