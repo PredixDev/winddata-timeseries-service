@@ -31,11 +31,11 @@ env:
     #predix_timeseries2_uaa_name : {uaaService2}
     
     #used by predix acs-spring-security-extensions
-    accessTokenEndpointUrl : https://{oauthRestHost}/oauth/token
-    clientId : {clientId}
-    clientSecret: {secret}
+    #accessTokenEndpointUrl : https://{oauthRestHost}/oauth/token
+    #clientId : {clientId}
+    #clientSecret: {secret}
     #used by predix uaa-token-lib
-    trustedIssuerIdsRegexPattern : ^https://(.*\\.)?{oauthRestHost}/oauth/token$
+    #trustedIssuerIdsRegexPattern : ^https://(.*\\.)?{oauthRestHost}/oauth/token$
     #logging - see application-cloud.properties
     logging_level_root: INFO
     logging_level_org_springframework: INFO
