@@ -18,6 +18,7 @@ env:
     predix_timeseries_wspool_maxActive : 5
     #second timeseries if needed
     #predix_timeseries2_name : {timeSeriesService2}
+    #predix_timeseries2_uaa_name : {uaaService2}
     #predix_timeseries2_oauth_issuerId : put.your.uaa.issuerId.here
     #predix_timeseries2_oauth_clientId : put.your.clientid.here:put.your.client.secret.here separated by a colon
     #used by predix acs-spring-security-extensions
