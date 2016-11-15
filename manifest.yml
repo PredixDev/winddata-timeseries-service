@@ -16,11 +16,20 @@ env:
     #default timeseries
     predix_timeseries_wspool_maxIdle : 5
     predix_timeseries_wspool_maxActive : 5
-    #second timeseries if needed
+
+	  #second timeseries if needed
+    #Two choices below for 2nd timeseries setup.  You can:
+    #Option 1. OR manually set these in the manifest below.  Uncomment the corresponding properties in application-cloud.properties
+    #predix_timeseries2_oauth_clientId : your-clientId:your-secret
+    #predix_timeseries2_oauth_issuerId_url : put.your.uaa.issuerId.here
+    #predix_timeseries2_queryUrl : https://put.your.timeseries.url.here/v1/datapoints
+    #predix_timeseries2_zoneid : put.your.timeseries.zoneid.aka.instanceid.here
+    #predix_timeseries2_websocket_uri : wss://put.your.timeseries.ingest.uri.here/v1/stream/messages
+    #Option 2. use vcap binding - you may need to use CUPS if timeseries is in another space.
+    #predix_timeseries2_oauth_clientId : your-clientId:your-secret
     #predix_timeseries2_name : {timeSeriesService2}
     #predix_timeseries2_uaa_name : {uaaService2}
-    #predix_timeseries2_oauth_issuerId : put.your.uaa.issuerId.here
-    #predix_timeseries2_oauth_clientId : put.your.clientid.here:put.your.client.secret.here separated by a colon
+    
     #used by predix acs-spring-security-extensions
     accessTokenEndpointUrl : https://{oauthRestHost}/oauth/token
     clientId : {clientId}
