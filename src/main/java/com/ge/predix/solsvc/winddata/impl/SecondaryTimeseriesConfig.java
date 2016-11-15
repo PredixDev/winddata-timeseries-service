@@ -96,7 +96,6 @@ public class SecondaryTimeseriesConfig extends DefaultTimeseriesConfig
     @Override
     public void setEnvironment(Environment env)
     {
-        super.setEnvironment(env);
         String vcapPropertyName = null;
         String tsName = env.getProperty(TIME_SERIES2_VCAPS_NAME); // this is set
                                                                  // on the
