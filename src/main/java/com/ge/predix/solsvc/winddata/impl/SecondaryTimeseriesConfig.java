@@ -134,4 +134,13 @@ public class SecondaryTimeseriesConfig extends DefaultTimeseriesConfig
     }
 
  
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
+    @SuppressWarnings("nls")
+    @Override
+    public String toString()
+    {
+        return "SecondaryTimeseriesConfig [queryUrl=" + this.getQueryUrl() + "] " + super.toString();
+    }
 }
