@@ -32,293 +32,306 @@ import com.ge.predix.solsvc.timeseries.bootstrap.factories.TimeseriesFactory;
 import com.ge.predix.solsvc.winddata.api.WindDataAPI;
 
 /**
+ * Return data over REST from time series for PredixNodejsStarter
+ * 
+ * To turn on a 2nd time series:
+ * 1. uncomment the 3 sections below
+ * 2. in SecondaryTimeseriesConfig uncomment the @Component
+ * 3. in src/main/resources/application-cloud.properties uncomment the props for Option 1 or 2
+ * 4. in manifest.yml uncomment and fill in the properties for Option 1 or 2
  * 
  * @author predix -
  */
 @Component
-public class WindDataImpl
-        implements WindDataAPI
-{
+public class WindDataImpl implements WindDataAPI {
+	private static Logger log = LoggerFactory.getLogger(WindDataImpl.class);
 
-    @Autowired
-    private IServiceManagerService serviceManagerService;
+	@Autowired
+	private IServiceManagerService serviceManagerService;
 
-    @Autowired
-    @Qualifier("defaultTimeseriesConfig")
-    private ITimeseriesConfig      timeseriesConfig;
+	@Autowired
+	private RestClient restClient;
 
-    @Autowired
-    private RestClient             restClient;
+	@Autowired
+	private TimeseriesFactory timeseriesFactory;
 
-    @Autowired
-    private TimeseriesFactory      timeseriesFactory;
+	@Autowired
+	@Qualifier("defaultTimeseriesConfig")
+	private ITimeseriesConfig timeseriesConfig;
 
-    private static Logger          log = LoggerFactory.getLogger(WindDataImpl.class);
+	// things needed for 2nd time series, if you have that use-case
+//	@Autowired
+//	private RestClient restClient2;
+//
+//	@Autowired
+//	private TimeseriesFactory timeseriesFactory2;
+//
+//	@Autowired
+//	private SecondaryTimeseriesConfig secondaryTimeseriesConfig;
 
-    /**
-     * -
-     */
-    public WindDataImpl()
-    {
-        super();
-    }
+	/**
+	 * -
+	 */
+	public WindDataImpl() {
+		super();
+	}
 
-    /**
-     * -
-     */
-    @SuppressWarnings("nls")
-    @PostConstruct
-    public void init()
-    {
-        try
-        {
-            this.serviceManagerService.createRestWebService(this, null);
-            this.timeseriesFactory.createConnectionToTimeseriesWebsocket();
-            createMetrics();
-        }
-        catch (Exception e)
-        {
-            throw new RuntimeException(
-                    "unable to set up timeseries Websocket Pool timeseriesConfig=" + this.timeseriesConfig,e);
-        }
-    }
+	/**
+	 * -
+	 */
+	@SuppressWarnings("nls")
+	@PostConstruct
+	public void init() {
+		try {
+			this.serviceManagerService.createRestWebService(this, null);
+			this.timeseriesFactory.createConnectionToTimeseriesWebsocket();
+			createMetrics();
+		} catch (Exception e) {
+			throw new RuntimeException(
+					"unable to set up timeseries Websocket Pool timeseriesConfig=" + this.timeseriesConfig, e);
+		}
+//		try {
+//			// a second timeseries, if you have that use-case
+//			this.restClient2.overrideRestConfig(this.secondaryTimeseriesConfig);
+//			this.timeseriesFactory2.overrideConfig(this.secondaryTimeseriesConfig);
+//			log.debug("init secondary timeseries properties=" + this.secondaryTimeseriesConfig.toString());
+//			// if write privs to 2nd timeseries are revoked do not uncomment
+//			// this or you'll get 401 unauthorized
+//			// this.timeseriesFactory2.createConnectionToTimeseriesWebsocket();
+//			createMetrics();
+//		} catch (Exception e) {
+//			throw new RuntimeException("unable to set up timeseries Websocket Pool secondaryTimeseriesConfig="
+//					+ this.secondaryTimeseriesConfig, e);
+//		}
+	}
 
-    @Override
-    public Response greetings()
-    {
-        return handleResult("Greetings from CXF Bean Rest Service " + new Date()); //$NON-NLS-1$
-    }
+	@Override
+	public Response greetings() {
+		return handleResult("Greetings from CXF Bean Rest Service " + new Date()); //$NON-NLS-1$
+	}
 
-    @SuppressWarnings("nls")
-    @Override
-    public Response getYearlyWindDataPoints(String id, String authorization, String starttime, String taglimit,
-            String tagorder)
-    {
-        try
-        {
-            if ( id == null )
-            {
-                return null;
-            }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.ge.predix.solsvc.api.WindDataAPI#getWindDataTags()
+	 */
+	@SuppressWarnings("nls")
+	@Override
+	public Response getWindDataTags(String authorization) {
+		try {
+			List<Header> headers = generateHeaders();
+			TagsList tagsList = this.timeseriesFactory.listTags(headers);
 
-            List<Header> headers = generateHeaders();
+			// example of calling 2nd time series
+//			List<Header> headers2 = this.restClient2.getSecureTokenForClientId();
+//			this.restClient2.addZoneToHeaders(headers2, this.secondaryTimeseriesConfig.getZoneId());
+//			TagsList tagsList2 = this.timeseriesFactory2.listTags(headers2);
+//			tagsList.getResults().add("*****************************");
+//			tagsList.getResults().add(this.timeseriesConfig.toString());
+//			tagsList.getResults().add("*****************************");
+//			tagsList.getResults().add(this.secondaryTimeseriesConfig.toString());
+//			tagsList.getResults().add("*****************************");
+//			tagsList.getResults().addAll(tagsList2.getResults());
 
-            DatapointsQuery dpQuery = buildDatapointsQueryRequest(id, starttime, getInteger(taglimit), tagorder);
-            DatapointsResponse response = this.timeseriesFactory.queryForDatapoints(dpQuery, headers);
-            log.debug(response.toString());
-            return handleResult(response);
-        }
-        catch (Throwable e)
-        {
-            log.error("unable to get wind data, config=" + this.timeseriesConfig, e);
-            // This is sample code so we need to easily show you what went wrong, please convert your app to show appropriate info to end users. For security
-            // reasons do not expose these properties.
-            throw new RuntimeException(
-                    "unable to get wind data, errorMsg=" + e.getMessage() + ". config=" + this.timeseriesConfig, e);
-        }
-    }
+			return handleResult(tagsList);
+		} catch (Throwable e) {
+			log.error("unable to get wind data, config=" + this.timeseriesConfig, e);
+			// This is sample code so we need to easily show you what went
+			// wrong, please convert your app to show appropriate info to end
+			// users. For security
+			// reasons do not expose these properties.
+			throw new RuntimeException(
+					"unable to get wind data, errorMsg=" + e.getMessage() + ". config=" + this.timeseriesConfig, e);
+		}
+	}
 
-    /**
-     * 
-     * @param s -
-     * @return
-     */
-    private int getInteger(String s)
-    {
-        int inValue = 25;
-        try
-        {
-            inValue = Integer.parseInt(s);
+	@SuppressWarnings("nls")
+	@Override
+	public Response getYearlyWindDataPoints(String id, String authorization, String starttime, String taglimit,
+			String tagorder) {
+		try {
+			if (id == null) {
+				return null;
+			}
 
-        }
-        catch (NumberFormatException ex)
-        {
-            // s is not an integer
-        }
-        return inValue;
-    }
+			List<Header> headers = generateHeaders();
 
-    @SuppressWarnings("nls")
-    @Override
-    public Response getLatestWindDataPoints(String id, String authorization)
-    {
-        try
-        {
-            if ( id == null )
-            {
-                return null;
-            }
-            List<Header> headers = generateHeaders();
+			DatapointsQuery dpQuery = buildDatapointsQueryRequest(id, starttime, getInteger(taglimit), tagorder);
+			DatapointsResponse response = this.timeseriesFactory.queryForDatapoints(dpQuery, headers);
+			log.debug(response.toString());
+			return handleResult(response);
+		} catch (Throwable e) {
+			log.error("unable to get wind data, config=" + this.timeseriesConfig, e);
+			// This is sample code so we need to easily show you what went
+			// wrong, please convert your app to show appropriate info to end
+			// users. For security
+			// reasons do not expose these properties.
+			throw new RuntimeException(
+					"unable to get wind data, errorMsg=" + e.getMessage() + ". config=" + this.timeseriesConfig, e);
+		}
+	}
 
-            DatapointsLatestQuery dpQuery = buildLatestDatapointsQueryRequest(id);
-            DatapointsResponse response = this.timeseriesFactory.queryForLatestDatapoint(dpQuery, headers);
-            log.debug(response.toString());
+	/**
+	 * 
+	 * @param s
+	 *            -
+	 * @return
+	 */
+	private int getInteger(String s) {
+		int inValue = 25;
+		try {
+			inValue = Integer.parseInt(s);
 
-            return handleResult(response);
-        }
-        catch (Throwable e)
-        {
-            log.error("unable to get wind data, config=" + this.timeseriesConfig, e);
-            // This is sample code so we need to easily show you what went wrong, please convert your app to show appropriate info to end users. For security
-            // reasons do not expose these properties.
-            throw new RuntimeException(
-                    "unable to get wind data, errorMsg=" + e.getMessage() + ". config=" + this.timeseriesConfig, e);
+		} catch (NumberFormatException ex) {
+			// s is not an integer
+		}
+		return inValue;
+	}
 
-        }
-    }
+	@SuppressWarnings("nls")
+	@Override
+	public Response getLatestWindDataPoints(String id, String authorization) {
+		try {
+			if (id == null) {
+				return null;
+			}
+			List<Header> headers = generateHeaders();
 
-    @SuppressWarnings({})
-    private List<Header> generateHeaders()
-    {
-        List<Header> headers = this.restClient.getSecureTokenForClientId();
-        this.restClient.addZoneToHeaders(headers, this.timeseriesConfig.getZoneId());
-        return headers;
-    }
+			DatapointsLatestQuery dpQuery = buildLatestDatapointsQueryRequest(id);
+			DatapointsResponse response = this.timeseriesFactory.queryForLatestDatapoint(dpQuery, headers);
+			log.debug(response.toString());
 
-    private DatapointsLatestQuery buildLatestDatapointsQueryRequest(String id)
-    {
-        DatapointsLatestQuery datapointsLatestQuery = new DatapointsLatestQuery();
+			return handleResult(response);
+		} catch (Throwable e) {
+			log.error("unable to get wind data, config=" + this.timeseriesConfig, e);
+			// This is sample code so we need to easily show you what went
+			// wrong, please convert your app to show appropriate info to end
+			// users. For security
+			// reasons do not expose these properties.
+			throw new RuntimeException(
+					"unable to get wind data, errorMsg=" + e.getMessage() + ". config=" + this.timeseriesConfig, e);
 
-        com.ge.predix.entity.timeseries.datapoints.queryrequest.latest.Tag tag = new com.ge.predix.entity.timeseries.datapoints.queryrequest.latest.Tag();
-        tag.setName(id);
-        List<com.ge.predix.entity.timeseries.datapoints.queryrequest.latest.Tag> tags = new ArrayList<com.ge.predix.entity.timeseries.datapoints.queryrequest.latest.Tag>();
-        tags.add(tag);
-        datapointsLatestQuery.setTags(tags);
-        return datapointsLatestQuery;
-    }
+		}
+	}
 
-    /**
-     * 
-     * @param id
-     * @param startDuration
-     * @param tagorder
-     * @return
-     */
-    private DatapointsQuery buildDatapointsQueryRequest(String id, String startDuration, int taglimit, String tagorder)
-    {
-        DatapointsQuery datapointsQuery = new DatapointsQuery();
-        List<com.ge.predix.entity.timeseries.datapoints.queryrequest.Tag> tags = new ArrayList<com.ge.predix.entity.timeseries.datapoints.queryrequest.Tag>();
-        datapointsQuery.setStart(startDuration);
-        // datapointsQuery.setStart("1y-ago"); //$NON-NLS-1$
-        String[] tagArray = id.split(","); //$NON-NLS-1$
-        List<String> entryTags = Arrays.asList(tagArray);
+	@SuppressWarnings({})
+	private List<Header> generateHeaders() {
+		List<Header> headers = this.restClient.getSecureTokenForClientId();
+		this.restClient.addZoneToHeaders(headers, this.timeseriesConfig.getZoneId());
+		return headers;
+	}
 
-        for (String entryTag : entryTags)
-        {
-            com.ge.predix.entity.timeseries.datapoints.queryrequest.Tag tag = new com.ge.predix.entity.timeseries.datapoints.queryrequest.Tag();
-            tag.setName(entryTag);
-            tag.setLimit(taglimit);
-            tag.setOrder(tagorder);
-            tags.add(tag);
-        }
-        datapointsQuery.setTags(tags);
-        return datapointsQuery;
-    }
+	private DatapointsLatestQuery buildLatestDatapointsQueryRequest(String id) {
+		DatapointsLatestQuery datapointsLatestQuery = new DatapointsLatestQuery();
 
-    @SuppressWarnings(
-    {
-            "nls", "unchecked"
-    })
-    private void createMetrics()
-    {
-        for (int i = 0; i < 10; i++)
-        {
-            DatapointsIngestion dpIngestion = new DatapointsIngestion();
-            dpIngestion.setMessageId(String.valueOf(System.currentTimeMillis()));
+		com.ge.predix.entity.timeseries.datapoints.queryrequest.latest.Tag tag = new com.ge.predix.entity.timeseries.datapoints.queryrequest.latest.Tag();
+		tag.setName(id);
+		List<com.ge.predix.entity.timeseries.datapoints.queryrequest.latest.Tag> tags = new ArrayList<com.ge.predix.entity.timeseries.datapoints.queryrequest.latest.Tag>();
+		tags.add(tag);
+		datapointsLatestQuery.setTags(tags);
+		return datapointsLatestQuery;
+	}
 
-            Body body = new Body();
-            body.setName("Compressor-2015:CompressionRatio"); //$NON-NLS-1$
-            List<Object> datapoint1 = new ArrayList<Object>();
-            datapoint1.add(generateTimestampsWithinYear(System.currentTimeMillis()));
-            datapoint1.add(10);
-            datapoint1.add(3); // quality
+	/**
+	 * 
+	 * @param id
+	 * @param startDuration
+	 * @param tagorder
+	 * @return
+	 */
+	private DatapointsQuery buildDatapointsQueryRequest(String id, String startDuration, int taglimit,
+			String tagorder) {
+		DatapointsQuery datapointsQuery = new DatapointsQuery();
+		List<com.ge.predix.entity.timeseries.datapoints.queryrequest.Tag> tags = new ArrayList<com.ge.predix.entity.timeseries.datapoints.queryrequest.Tag>();
+		datapointsQuery.setStart(startDuration);
+		// datapointsQuery.setStart("1y-ago"); //$NON-NLS-1$
+		String[] tagArray = id.split(","); //$NON-NLS-1$
+		List<String> entryTags = Arrays.asList(tagArray);
 
-            List<Object> datapoint2 = new ArrayList<Object>();
-            datapoint2.add(generateTimestampsWithinYear(System.currentTimeMillis()));
-            datapoint2.add(9);
-            datapoint2.add(1); // quality
+		for (String entryTag : entryTags) {
+			com.ge.predix.entity.timeseries.datapoints.queryrequest.Tag tag = new com.ge.predix.entity.timeseries.datapoints.queryrequest.Tag();
+			tag.setName(entryTag);
+			tag.setLimit(taglimit);
+			tag.setOrder(tagorder);
+			tags.add(tag);
+		}
+		datapointsQuery.setTags(tags);
+		return datapointsQuery;
+	}
 
-            List<Object> datapoint3 = new ArrayList<Object>();
-            datapoint3.add(generateTimestampsWithinYear(System.currentTimeMillis()));
-            datapoint3.add(27);
-            datapoint3.add(0); // quality
+	@SuppressWarnings({ "nls", "unchecked" })
+	private void createMetrics() {
+		for (int i = 0; i < 10; i++) {
+			DatapointsIngestion dpIngestion = new DatapointsIngestion();
+			dpIngestion.setMessageId(String.valueOf(System.currentTimeMillis()));
 
-            List<Object> datapoint4 = new ArrayList<Object>();
-            datapoint4.add(generateTimestampsWithinYear(System.currentTimeMillis()));
-            datapoint4.add(78);
-            datapoint4.add(2); // quality
+			Body body = new Body();
+			body.setName("Compressor-2015:CompressionRatio"); //$NON-NLS-1$
+			List<Object> datapoint1 = new ArrayList<Object>();
+			datapoint1.add(generateTimestampsWithinYear(System.currentTimeMillis()));
+			datapoint1.add(10);
+			datapoint1.add(3); // quality
 
-            List<Object> datapoint5 = new ArrayList<Object>();
-            datapoint5.add(generateTimestampsWithinYear(System.currentTimeMillis()));
-            datapoint5.add(2);
-            datapoint5.add(3); // quality
+			List<Object> datapoint2 = new ArrayList<Object>();
+			datapoint2.add(generateTimestampsWithinYear(System.currentTimeMillis()));
+			datapoint2.add(9);
+			datapoint2.add(1); // quality
 
-            List<Object> datapoint6 = new ArrayList<Object>();
-            datapoint6.add(generateTimestampsWithinYear(System.currentTimeMillis()));
-            datapoint6.add(98);
-            datapoint6.add(1); // quality
+			List<Object> datapoint3 = new ArrayList<Object>();
+			datapoint3.add(generateTimestampsWithinYear(System.currentTimeMillis()));
+			datapoint3.add(27);
+			datapoint3.add(0); // quality
 
-            List<Object> datapoints = new ArrayList<Object>();
-            datapoints.add(datapoint1);
-            datapoints.add(datapoint2);
-            datapoints.add(datapoint3);
-            datapoints.add(datapoint4);
-            datapoints.add(datapoint5);
-            datapoints.add(datapoint6);
+			List<Object> datapoint4 = new ArrayList<Object>();
+			datapoint4.add(generateTimestampsWithinYear(System.currentTimeMillis()));
+			datapoint4.add(78);
+			datapoint4.add(2); // quality
 
-            body.setDatapoints(datapoints);
+			List<Object> datapoint5 = new ArrayList<Object>();
+			datapoint5.add(generateTimestampsWithinYear(System.currentTimeMillis()));
+			datapoint5.add(2);
+			datapoint5.add(3); // quality
 
-            com.ge.predix.entity.util.map.Map map = new com.ge.predix.entity.util.map.Map();
-            map.put("host", "server1"); //$NON-NLS-2$
-            map.put("customer", "Acme"); //$NON-NLS-2$
+			List<Object> datapoint6 = new ArrayList<Object>();
+			datapoint6.add(generateTimestampsWithinYear(System.currentTimeMillis()));
+			datapoint6.add(98);
+			datapoint6.add(1); // quality
 
-            body.setAttributes(map);
+			List<Object> datapoints = new ArrayList<Object>();
+			datapoints.add(datapoint1);
+			datapoints.add(datapoint2);
+			datapoints.add(datapoint3);
+			datapoints.add(datapoint4);
+			datapoints.add(datapoint5);
+			datapoints.add(datapoint6);
 
-            List<Body> bodies = new ArrayList<Body>();
-            bodies.add(body);
+			body.setDatapoints(datapoints);
 
-            dpIngestion.setBody(bodies);
-            this.timeseriesFactory.postDataToTimeseriesWebsocket(dpIngestion);
-        }
-    }
+			com.ge.predix.entity.util.map.Map map = new com.ge.predix.entity.util.map.Map();
+			map.put("host", "server1"); //$NON-NLS-2$
+			map.put("customer", "Acme"); //$NON-NLS-2$
 
-    @SuppressWarnings("javadoc")
-    protected Response handleResult(Object entity)
-    {
-        ResponseBuilder responseBuilder = Response.status(Status.OK);
-        responseBuilder.type(MediaType.APPLICATION_JSON);
-        responseBuilder.entity(entity);
-        return responseBuilder.build();
-    }
+			body.setAttributes(map);
 
-    private Long generateTimestampsWithinYear(Long current)
-    {
-        long yearInMMS = Long.valueOf(31536000000L);
-        return ThreadLocalRandom.current().nextLong(current - yearInMMS, current + 1);
-    }
+			List<Body> bodies = new ArrayList<Body>();
+			bodies.add(body);
 
-    /*
-     * (non-Javadoc)
-     * @see com.ge.predix.solsvc.api.WindDataAPI#getWindDataTags()
-     */
-    @SuppressWarnings("nls")
-    @Override
-    public Response getWindDataTags(String authorization)
-    {
-        try
-        {
-            List<Header> headers = generateHeaders();
-            TagsList tagsList = this.timeseriesFactory.listTags(headers);
-            return handleResult(tagsList);
-        }
-        catch (Throwable e)
-        {
-            log.error("unable to get wind data, config=" + this.timeseriesConfig, e);
-            // This is sample code so we need to easily show you what went wrong, please convert your app to show appropriate info to end users. For security
-            // reasons do not expose these properties.
-            throw new RuntimeException(
-                    "unable to get wind data, errorMsg=" + e.getMessage() + ". config=" + this.timeseriesConfig, e);
-        }
-    }
+			dpIngestion.setBody(bodies);
+			this.timeseriesFactory.postDataToTimeseriesWebsocket(dpIngestion);
+		}
+	}
+
+	@SuppressWarnings("javadoc")
+	protected Response handleResult(Object entity) {
+		ResponseBuilder responseBuilder = Response.status(Status.OK);
+		responseBuilder.type(MediaType.APPLICATION_JSON);
+		responseBuilder.entity(entity);
+		return responseBuilder.build();
+	}
+
+	private Long generateTimestampsWithinYear(Long current) {
+		long yearInMMS = Long.valueOf(31536000000L);
+		return ThreadLocalRandom.current().nextLong(current - yearInMMS, current + 1);
+	}
 
 }
