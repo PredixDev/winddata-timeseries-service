@@ -86,6 +86,7 @@ public class SecondaryTimeseriesConfig extends DefaultTimeseriesConfig
      * The name of the VCAP property holding the name of the bound time series endpoint
      */
     public static final String TIME_SERIES2_VCAPS_NAME = "predix_timeseries2_name";   //$NON-NLS-1$
+    private static final String UAA2_VCAPS_NAME = "predix_timeseries2_uaa_name";   //$NON-NLS-1$
 
     /*
      * (non-Javadoc)
