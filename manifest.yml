@@ -17,7 +17,7 @@ env:
     predix_timeseries_wspool_maxIdle : 5
     predix_timeseries_wspool_maxActive : 5
 
-	  #second timeseries if needed
+    #second timeseries if needed
     #Two choices below for 2nd timeseries setup.  You can:
     #Option 1. OR manually set these in the manifest below.  Uncomment the corresponding properties in application-cloud.properties
     #predix_timeseries2_oauth_clientId : your-clientId:your-secret
