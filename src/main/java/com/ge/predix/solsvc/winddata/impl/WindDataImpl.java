@@ -79,7 +79,7 @@ public class WindDataImpl
         catch (Exception e)
         {
             throw new RuntimeException(
-                    "unable to set up timeseries Websocket Pool timeseriesConfig=" + this.timeseriesConfig);
+                    "unable to set up timeseries Websocket Pool timeseriesConfig=" + this.timeseriesConfig,e);
         }
     }
 
