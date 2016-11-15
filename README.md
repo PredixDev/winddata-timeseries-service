@@ -13,7 +13,7 @@ NOTE: This application relies on setting up of UAA and Time Series service insta
 
 Winddata has the following structure, which mirrors that of a Microservice Template found at [predix-microservice-cf-jsr](https://github.com/PredixDev/predix-microservice-cf-jsr)
 
-<img src="images/Winddata-microservice-template.png	">
+<img width=600 src="images/Winddata-microservice-template.png	">
 
 
 ##Run integration tests
