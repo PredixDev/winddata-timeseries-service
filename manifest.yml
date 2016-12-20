@@ -1,18 +1,19 @@
 applications:
-  - name: integration-winddata-service
+  - name: wind-test-winddata-service
     buildpack: java_buildpack
     path: target/winddata-timeseries-service-2.0.7.jar
     memory: 500M
     timeout : 180
     services:
-        - {uaaService}
-        - {timeSeriesService}
+        - wind-test-uaa
+        - wind-test-time-series
 
 env:
     # NOTE: Some values in curly braces are updated by scripts
-    predix_uaa_name: {uaaService}
-    predix_timeseries_name : {timeSeriesService}
-    predix_oauth_clientId : {clientId}:{secret}
+    SPRING_PROFILES_ACTIVE : cloud
+    predix_uaa_name: wind-test-uaa
+    predix_timeseries_name: wind-test-time-series
+    predix_oauth_clientId: app_client_id:secret
     #default timeseries
     predix_timeseries_wspool_maxIdle : 5
     predix_timeseries_wspool_maxActive : 5
@@ -35,7 +36,7 @@ env:
     #clientId : {clientId}
     #clientSecret: {secret}
     #used by predix uaa-token-lib
-    #trustedIssuerIdsRegexPattern : ^https://(.*\\.)?{oauthRestHost}/oauth/token$
+    #trustedIssuerIdsRegexPattern: ^https://(.*.)?ac4d50dc-3a09-462c-9766-5c5c0dcc938e.predix-uaa.run.aws-usw02-pr.ice.predix.io/oauth/token$
     #logging - see application-cloud.properties
     logging_level_root: INFO
     logging_level_org_springframework: INFO

@@ -10,6 +10,7 @@ applications:
 
 env:
     # NOTE: Some values in curly braces are updated by scripts
+    SPRING_PROFILES_ACTIVE : cloud
     predix_uaa_name: {uaaService}
     predix_timeseries_name : {timeSeriesService}
     predix_oauth_clientId : {clientId}:{secret}
