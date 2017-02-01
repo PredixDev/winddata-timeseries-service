@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:oauth="http://www.springframework.org/schema/security/oauth2"
+    xmlns:sec="http://www.springframework.org/schema/security"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/security/oauth2 http://www.springframework.org/schema/security/spring-security-oauth2.xsd
+        http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd">
+
+    <sec:authentication-manager />
+    
+    
+    <!-- This section shows how to enable authentication and authorization 
+        using values, like: IS_ACS_AUTHORIZED -->
+    <http pattern="/**" request-matcher="ant"
+        xmlns="http://www.springframework.org/schema/security"
+        disable-url-rewriting="true" use-expressions="true"
+        entry-point-ref="preAuthenticationEntryPoint">
+         <expression-handler ref="acsExpressionHandler" /> 
+	  
+     	<intercept-url pattern="/services/windservices/tags" access="isAcsAuthorized() and isFullyAuthenticated()" />
+       
+        <anonymous enabled="false" />
+        <custom-filter ref="oauth2ClientFilter" before="PRE_AUTH_FILTER" />
+        <custom-filter ref="oauth2ServiceFilter" position="PRE_AUTH_FILTER" />
+        <headers>
+	        <cache-control />
+	        <content-type-options />
+	        <hsts />
+	        <frame-options />
+	        <xss-protection />
+   		</headers>
+    </http>
+
+    <!-- ************************************* -->
+    <!-- OAuth2 Related Configuration : Begin -->
+    <oauth:resource-server id="oauth2ServiceFilter"
+        token-services-ref="remoteTokenServices" />
+
+    <!-- This component is used by spring security to validate authentication 
+        tokens in requests -->
+
+    <bean id="remoteTokenServices" class="com.ge.predix.uaa.token.lib.FastTokenServices">
+        <property name="useHttps" value="true" />
+        <property name="storeClaims" value="true" />
+        <property name="trustedIssuers">
+            <list> 
+                  <value>${accessTokenEndpointUrl}</value>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="preAuthenticationEntryPoint"
+        class="org.springframework.security.oauth2.provider.error.OAuth2AuthenticationEntryPoint" />
+
+    <oauth:client id="oauth2ClientFilter" />
+    <!-- OAuth2 Related Configuration : End -->
+    <!-- *********************************** -->
+
+
+    <!-- ***************************************** -->
+  
+  
+    <!-- <bean id="dataSeedClientCredentialsTemplate"
+        class="org.springframework.security.oauth2.client.OAuth2RestTemplate">
+        <constructor-arg>
+            <bean
+                class="org.springframework.security.oauth2.client.token.grant.client.ClientCredentialsResourceDetails">
+                <property name="clientId" value="${clientId}" />
+                <property name="clientSecret" value="${clientSecret}" />
+                <property name="accessTokenUri" value="${accessTokenEndpointUrl}" />
+            </bean>
+        </constructor-arg>
+
+        <property name="requestFactory">
+            <bean
+                class="org.springframework.http.client.HttpComponentsClientHttpRequestFactory">
+                <constructor-arg ref="httpClient" />
+            </bean>
+        </property>
+    </bean>
+
+    <bean id="httpClient" class="org.apache.http.impl.client.DefaultHttpClient">
+        <constructor-arg>
+            <bean
+                class="org.apache.http.impl.conn.PoolingClientConnectionManager" />
+        </constructor-arg>
+    </bean> -->
+
+    <import resource="classpath:acs-spring-config.xml" />
+
+    <!-- ***************************************** -->
+ 
+
+</beans>
