@@ -4,7 +4,9 @@
 <a href="http://predixdev.github.io/winddata-timeseries-service" target="_blank">
 	<img height="50px" width="100px" src="images/pages.jpg" alt="view github pages">
 </a>
+
 Predix Development Kit Winddata Time Series Service
+
 ==================================================
 
 Welcome to Winddata Time Series Service. This is a back-end application built in Java and Spring. It is an extension of [predix-microservice-cf-jsr](https://github.com/PredixDev/predix-microservice-cf-jsr). The application exposes Rest APIs for getting time series tags, data points for one year, and the latest data point. 
@@ -16,7 +18,7 @@ Winddata has the following structure, which mirrors that of a Microservice Templ
 <img width=600 src="images/Winddata-microservice-template.png	">
 
 
-##Run integration tests
+## Run integration tests
 
 1. Ensure you have set up your predix.io username/encrypted password in the maven settings.xml. Instruction are found [here](https://www.predix.io/resources/tutorials/tutorial-details.html?tutorial_id=1560&tag=1608&journey=Development%20tools%20and%20tips&resources=1565,1560).
 
@@ -52,14 +54,14 @@ NOTE: For more info on what to set up, look at manifest.yml.template
 cf push <appName> -f manifest.yml
 ```
 
-##Tech Stack
+## Tech Stack
 
  - Spring
  - SpringBoot
  - SpringTest
  - Maven
  
-##More Details
+## More Details
 
 [Exploring Time Series](https://www.predix.io/resources/tutorials/journey.html#Journey.Exploring Time Series)
 
