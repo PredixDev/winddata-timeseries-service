@@ -5,9 +5,8 @@
 	<img height="50px" width="100px" src="images/pages.jpg" alt="view github pages">
 </a>
 
-Predix Development Kit Winddata Time Series Service
+### Predix Development Kit Winddata Time Series Service
 
-==================================================
 
 Welcome to Winddata Time Series Service. This is a back-end application built in Java and Spring. It is an extension of [predix-microservice-cf-jsr](https://github.com/PredixDev/predix-microservice-cf-jsr). The application exposes Rest APIs for getting time series tags, data points for one year, and the latest data point. 
 
