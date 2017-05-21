@@ -1,46 +1,46 @@
 applications:
   - name: integration-winddata-service
     buildpack: java_buildpack
-    path: target/winddata-timeseries-service-2.0.23.jar
+    path: target/winddata-timeseries-service-2.0.24.jar
     memory: 500M
-    timeout : 180
+    timeout: 180
     services:
         - {uaaService}
         - {timeSeriesService}
 
 env:
     # NOTE: Some values in curly braces are updated by scripts
-    SPRING_PROFILES_ACTIVE : cloud
+    SPRING_PROFILES_ACTIVE: cloud
     predix_uaa_name: {uaaService}
-    predix_timeseries_name : {timeSeriesService}
-    predix_oauth_clientId : {base64clientId:secret}
+    predix_timeseries_name: {timeSeriesService}
+    predix_oauth_clientId: {clientId:secret}
     #default timeseries
-    predix_timeseries_wspool_maxIdle : 5
-    predix_timeseries_wspool_maxActive : 5
+    predix_timeseries_wspool_maxIdle: 5
+    predix_timeseries_wspool_maxActive: 5
     
     #second timeseries if needed
     #Two choices below for 2nd timeseries setup.  You can:
     #Option 1. OR manually set these in the manifest below.  Uncomment the corresponding properties in application-cloud.properties
-    #predix_timeseries2_oauth_clientId : your-clientId:your-secret
-    #predix_timeseries2_oauth_issuerId_url : put.your.uaa.issuerId.here
-    #predix_timeseries2_queryUrl : https://put.your.timeseries.url.here/v1/datapoints
-    #predix_timeseries2_zoneid : put.your.timeseries.zoneid.aka.instanceid.here
-    #predix_timeseries2_websocket_uri : wss://put.your.timeseries.ingest.uri.here/v1/stream/messages
+    #predix_timeseries2_oauth_clientId: your-clientId:your-secret
+    #predix_timeseries2_oauth_issuerId_url: put.your.uaa.issuerId.here
+    #predix_timeseries2_queryUrl: https://put.your.timeseries.url.here/v1/datapoints
+    #predix_timeseries2_zoneid: put.your.timeseries.zoneid.aka.instanceid.here
+    #predix_timeseries2_websocket_uri: wss://put.your.timeseries.ingest.uri.here/v1/stream/messages
     #Option 2. use vcap binding - you may need to use CUPS if timeseries is in another space.
-    #predix_timeseries2_oauth_clientId : your-clientId:your-secret
-    #predix_timeseries2_name : {timeSeriesService2}
-    #predix_timeseries2_uaa_name : {uaaService2}
+    #predix_timeseries2_oauth_clientId: your-clientId:your-secret
+    #predix_timeseries2_name: {timeSeriesService2}
+    #predix_timeseries2_uaa_name: {uaaService2}
     
     #used by predix acs-spring-security-extensions
-    #accessTokenEndpointUrl : https://{oauthRestHost}/oauth/token
-    #clientId : {clientId}
+    #accessTokenEndpointUrl: https://{oauthRestHost}/oauth/token
+    #clientId: {clientId}
     #clientSecret: {secret}
     #used by predix uaa-token-lib
-    #trustedIssuerIdsRegexPattern : ^https://(.*\\.)?{oauthRestHost}/oauth/token$
+    #trustedIssuerIdsRegexPattern: ^https://(.*\\.)?{oauthRestHost}/oauth/token$
     #logging - see application-cloud.properties
     logging_level_root: INFO
     logging_level_org_springframework: INFO
     logging_level_com_ge_predix_solsvc: DEBUG
-    JAVA_DOCS_URL : http://predixdev.github.io/winddata-timeseries-service/javadocs/index.html
+    JAVA_DOCS_URL: http://predixdev.github.io/winddata-timeseries-service/javadocs/index.html
     
     
