@@ -1,7 +1,7 @@
 applications:
-  - name: integration-winddata-service
+  - name: your-name-winddata-service
     buildpack: java_buildpack
-    path: target/winddata-timeseries-service-2.0.26.jar
+    path: target/winddata-timeseries-service-2.0.27.jar
     memory: 500M
     timeout: 180
     services:

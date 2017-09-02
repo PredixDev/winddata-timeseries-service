@@ -62,6 +62,6 @@ cf push <appName> -f manifest.yml
  
 ## More Details
 
-[Exploring Time Series](https://www.predix.io/resources/tutorials/journey.html#Journey.Exploring%20Time%20Series)
+[Exploring Time Series](https://www.predix.io/resources/tutorials/journey.html#Journey.Exploring Time Series)
 
 [![Analytics](https://ga-beacon.appspot.com/UA-82773213-1/winddata-timeseries-service/readme?pixel)](https://github.com/PredixDev)
