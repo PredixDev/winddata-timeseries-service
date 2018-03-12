@@ -1,7 +1,7 @@
 applications:
   - name: your-name-winddata-service
     buildpack: java_buildpack
-    path: target/winddata-timeseries-service-2.0.45.jar
+    path: target/winddata-timeseries-service-2.0.46.jar
     memory: 500M
     timeout: 180
     services:
