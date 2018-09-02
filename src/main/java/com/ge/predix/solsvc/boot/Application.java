@@ -15,6 +15,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.context.embedded.ServletRegistrationBean;
 import org.springframework.boot.context.embedded.tomcat.TomcatEmbeddedServletContainerFactory;
+import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ImportResource;
@@ -26,6 +27,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.support.StandardServletEnvironment;
+
+import com.ge.predix.solsvc.timeseries.bootstrap.client.TimeseriesClientImpl;
 
 /**
  * This project uses a SpringBoot HelloWorld as a starting point. Then it adds in the capability to cf push a 
@@ -61,7 +64,7 @@ import org.springframework.web.context.support.StandardServletEnvironment;
  * Or if you want to import Spring XMLs from other dependent projects you can use the @ImportResource, e.g. 
  * \@ImportResource(
  * {
- *         "classpath*:META-INF/spring/predix-rest-client-scan-context.xml"
+ *         "classpath*:META-INF/spring/timeseries-bootstrap-scan-context.xml"
  * })
  * 
  * For other Spring Features see: http://docs.spring.io/spring-boot/docs/current/reference/html/
@@ -74,15 +77,14 @@ import org.springframework.web.context.support.StandardServletEnvironment;
         
 })
 @PropertySource("classpath:application-default.properties")
+@SpringApplicationConfiguration(classes =
+{
+        TimeseriesClientImpl.class
+})
 @ImportResource(
 {
     "classpath*:META-INF/spring/winddata-cxf-context.xml",
-    "classpath*:META-INF/spring/winddata-scan-context.xml",
-    "classpath*:META-INF/spring/ext-util-scan-context.xml",
-    "classpath*:META-INF/spring/predix-rest-client-scan-context.xml",
-    "classpath*:META-INF/spring/predix-websocket-client-scan-context.xml",
-    "classpath*:META-INF/spring/timeseries-bootstrap-scan-context.xml"
-       
+    "classpath*:META-INF/spring/winddata-scan-context.xml"       
 })
 @Controller
 public class Application
